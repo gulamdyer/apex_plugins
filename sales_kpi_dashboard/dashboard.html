@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales KPI Dashboard</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <svg class="logo-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="64" height="64" rx="12" fill="url(#gradient)"/>
+                <path d="M20 38L28 30L36 38L44 22" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="28" cy="30" r="2" fill="white"/>
+                <circle cx="36" cy="38" r="2" fill="white"/>
+                <circle cx="44" cy="22" r="2" fill="white"/>
+                <circle cx="20" cy="38" r="2" fill="white"/>
+                <defs>
+                    <linearGradient id="gradient" x1="0" y1="0" x2="64" y2="64">
+                        <stop offset="0%" style="stop-color:#667eea"/>
+                        <stop offset="100%" style="stop-color:#764ba2"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <div class="sidebar-title">
+                <h2>Sales KPI</h2>
+                <p>Dashboard</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#overview" class="nav-item active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <rect x="3" y="3" width="7" height="7" stroke-width="2" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" stroke-width="2" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" stroke-width="2" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" stroke-width="2" rx="1"/>
+                </svg>
+                <span>Overview</span>
+            </a>
+            <a href="#sales" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <line x1="12" y1="20" x2="12" y2="10" stroke-width="2"/>
+                    <line x1="18" y1="20" x2="18" y2="4" stroke-width="2"/>
+                    <line x1="6" y1="20" x2="6" y2="16" stroke-width="2"/>
+                </svg>
+                <span>Sales Analysis</span>
+            </a>
+            <a href="#performance" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke-width="2"/>
+                </svg>
+                <span>Performance</span>
+            </a>
+            <a href="#products" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke-width="2"/>
+                </svg>
+                <span>Products</span>
+            </a>
+            <a href="#team" class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke-width="2"/>
+                    <circle cx="9" cy="7" r="4" stroke-width="2"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke-width="2"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke-width="2"/>
+                </svg>
+                <span>Team</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn" id="logoutBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke-width="2"/>
+                    <polyline points="16 17 21 12 16 7" stroke-width="2"/>
+                    <line x1="21" y1="12" x2="9" y2="12" stroke-width="2"/>
+                </svg>
+                <span>Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <line x1="3" y1="12" x2="21" y2="12" stroke-width="2"/>
+                        <line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/>
+                        <line x1="3" y1="18" x2="21" y2="18" stroke-width="2"/>
+                    </svg>
+                </button>
+                <div class="header-title">
+                    <h1>Sales Performance Dashboard</h1>
+                    <p id="currentDate">Loading...</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="period-selector">
+                    <select id="periodSelector">
+                        <option value="current">Current Month</option>
+                        <option value="last3">Last 3 Months</option>
+                        <option value="last6">Last 6 Months</option>
+                        <option value="ytd">Year to Date</option>
+                    </select>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar">
+                        <span>A</span>
+                    </div>
+                    <div class="user-info">
+                        <p class="user-name" id="userName">Admin</p>
+                        <p class="user-role">Administrator</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- KPI Cards -->
+        <div class="kpi-cards">
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <line x1="12" y1="1" x2="12" y2="23" stroke-width="2"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke-width="2"/>
+                    </svg>
+                </div>
+                <div class="kpi-content">
+                    <p class="kpi-label">Total Sales</p>
+                    <h3 class="kpi-value" id="totalSales">$0</h3>
+                    <div class="kpi-change positive">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="18 15 12 9 6 15" stroke-width="2"/>
+                        </svg>
+                        <span id="totalSalesChange">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke-width="2"/>
+                    </svg>
+                </div>
+                <div class="kpi-content">
+                    <p class="kpi-label">Orders</p>
+                    <h3 class="kpi-value" id="totalOrders">0</h3>
+                    <div class="kpi-change positive">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="18 15 12 9 6 15" stroke-width="2"/>
+                        </svg>
+                        <span id="totalOrdersChange">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                        <path d="M12 6v6l4 2" stroke-width="2"/>
+                    </svg>
+                </div>
+                <div class="kpi-content">
+                    <p class="kpi-label">Conversion Rate</p>
+                    <h3 class="kpi-value" id="conversionRate">0%</h3>
+                    <div class="kpi-change positive">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="18 15 12 9 6 15" stroke-width="2"/>
+                        </svg>
+                        <span id="conversionRateChange">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke-width="2"/>
+                        <line x1="2" y1="12" x2="22" y2="12" stroke-width="2" stroke-dasharray="2 2"/>
+                    </svg>
+                </div>
+                <div class="kpi-content">
+                    <p class="kpi-label">Revenue Loss</p>
+                    <h3 class="kpi-value" id="revenueLoss">$0</h3>
+                    <div class="kpi-change negative">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="6 9 12 15 18 9" stroke-width="2"/>
+                        </svg>
+                        <span id="revenueLossChange">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-grid">
+            <!-- Monthly Sales Trend -->
+            <div class="chart-card full-width">
+                <div class="chart-header">
+                    <h3>Monthly Sales Trend</h3>
+                    <div class="chart-legend" id="monthlyLegend"></div>
+                </div>
+                <canvas id="monthlySalesChart"></canvas>
+            </div>
+
+            <!-- Store-wise Sales -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Store-wise Sales Performance</h3>
+                </div>
+                <canvas id="storeSalesChart"></canvas>
+            </div>
+
+            <!-- Salesperson Performance -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Top Salespeople</h3>
+                </div>
+                <canvas id="salespersonChart"></canvas>
+            </div>
+
+            <!-- Sales Comparison -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Sales Comparison (Current vs Previous)</h3>
+                </div>
+                <canvas id="comparisonChart"></canvas>
+            </div>
+
+            <!-- Conversion Funnel -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Opportunity to Order Conversion</h3>
+                </div>
+                <canvas id="conversionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Tables Section -->
+        <div class="tables-grid">
+            <!-- Top Trending Products -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3>Top Trending Products</h3>
+                    <span class="badge">Last 30 Days</span>
+                </div>
+                <div class="table-container">
+                    <table id="productsTable">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Product</th>
+                                <th>Sales</th>
+                                <th>Revenue</th>
+                                <th>Growth</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Top Performers by Country -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3>Top Salespeople by Country</h3>
+                    <select id="countryFilter" class="filter-select">
+                        <option value="all">All Countries</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table id="performersTable">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Name</th>
+                                <th>Country</th>
+                                <th>Store</th>
+                                <th>Sales</th>
+                            </tr>
+                        </thead>
+                        <tbody id="performersTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Loss Analysis -->
+        <div class="loss-analysis">
+            <div class="chart-card full-width">
+                <div class="chart-header">
+                    <h3>Revenue Loss Analysis</h3>
+                    <div class="loss-summary" id="lossSummary"></div>
+                </div>
+                <div class="loss-grid">
+                    <div class="loss-item">
+                        <div class="loss-icon" style="background: #fee2e2;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444">
+                                <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                                <line x1="15" y1="9" x2="9" y2="15" stroke-width="2"/>
+                                <line x1="9" y1="9" x2="15" y2="15" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div class="loss-content">
+                            <p>Cancelled Orders</p>
+                            <h4 id="lostCancelled">$0</h4>
+                            <span class="loss-count" id="lostCancelledCount">0 orders</span>
+                        </div>
+                    </div>
+                    <div class="loss-item">
+                        <div class="loss-icon" style="background: #fef3c7;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b">
+                                <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                                <path d="M12 8v4M12 16h.01" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="loss-content">
+                            <p>Failed Conversions</p>
+                            <h4 id="lostConversions">$0</h4>
+                            <span class="loss-count" id="lostConversionsCount">0 opportunities</span>
+                        </div>
+                    </div>
+                    <div class="loss-item">
+                        <div class="loss-icon" style="background: #dbeafe;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div class="loss-content">
+                            <p>Returns</p>
+                            <h4 id="lostReturns">$0</h4>
+                            <span class="loss-count" id="lostReturnsCount">0 returns</span>
+                        </div>
+                    </div>
+                    <div class="loss-item">
+                        <div class="loss-icon" style="background: #e0e7ff;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1">
+                                <path d="M3 12h18M3 6h18M3 18h18" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="loss-content">
+                            <p>Discounts Given</p>
+                            <h4 id="lostDiscounts">$0</h4>
+                            <span class="loss-count" id="lostDiscountsCount">0 discounts</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
